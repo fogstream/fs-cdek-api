@@ -16,8 +16,8 @@ CDEK-API
 Для установки используйте [pipenv](http://pipenv.org/) (или pip):
 
 ```bash
-$ pipenv install cdek-api
-$ pip install cdek-api
+$ pipenv install fs-cdek-api
+$ pip install fs-cdek-api
 ```
 
 Примеры

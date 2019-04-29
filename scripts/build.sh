@@ -68,14 +68,14 @@ set -e
 echo "..... Trying to install the new tarball inside a virtualenv"
 virtualenv .venv/test-tarball
 source .venv/test-tarball/bin/activate
-pip install --no-binary :all: -f dist/ cdek-api
+pip install --no-binary :all: -f dist/ fs-cdek-api
 deactivate
 rm -rf .venv/
 
 echo "..... Trying to install the new wheel inside a virtualenv"
 virtualenv .venv/test-wheel
 source .venv/test-wheel/bin/activate
-pip install --only-binary :all: -f dist/ cdek-api
+pip install --only-binary :all: -f dist/ fs-cdek-api
 deactivate
 rm -rf .venv/
 

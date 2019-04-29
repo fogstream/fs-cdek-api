@@ -5,11 +5,10 @@ import sys
 
 from setuptools import Command, find_packages, setup
 
-
 # Package meta-data.
 NAME = 'fs-cdek-api'
 DESCRIPTION = 'CDEK API wrapper'
-URL = 'https://github.com/fogsteam/fs-cdek-api'
+URL = 'https://github.com/fogstream/fs-cdek-api'
 EMAIL = 'fadeddexofan@gmail.com'
 MAINTAINER = 'fadedDexofan'
 REQUIRES_PYTHON = '>=3.6.0'
@@ -104,7 +103,8 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: Implementation :: CPython',
     ],
-    keywords=['cdek', 'api', 'cdek', 'cdek-api', 'sdk', 'integration'],
+    keywords=['cdek', 'api', 'cdek', 'fs-cdek-api', 'sdk', 'integration',
+              'fogstream', ],
     zip_safe=False,
     cmdclass={
         'upload': UploadCommand,
