@@ -1,0 +1,56 @@
+dist: xenial
+language: python
+python:
+  - "3.6"
+  - "3.7"
+  - "3.8-dev"
+stages:
+  - test
+  - build_and_package_sanity
+matrix:
+  include:
+    - { stage: test, python: 3.7, env: TOXENV=flake8 }
+    - { stage: test, python: 3.7, env: TOXENV=pylint }
+    - { stage: test, python: 3.7, env: TOXENV=readme }
+    - { stage: build_and_package_sanity, python: 3.7, env: SANITY_CHECK=1 }
+before_install:
+  - chmod +x ./scripts/build.sh
+  - python --version
+  - uname -a
+  - lsb_release -a
+install:
+  - pip install tox-travis
+  - pip install -e .[for_tests]
+  - pip install -U setuptools
+  - virtualenv --version
+  - easy_install --version
+  - pip --version
+  - tox --version
+  - coverage --version
+script:
+  - |
+    if [ -z "$SANITY_CHECK" ]; then
+        tox
+    else
+        ./scripts/build.sh
+    fi
+after_success:
+  - |
+    if [ -z "$SANITY_CHECK" ]; then
+        pip install coveralls
+        coveralls
+    fi
+notifications:
+  email:
+    on_failure: change
+    on_success: never
+deploy:
+  provider: pypi
+  user: "fogstream"
+  password:
+    secure: "kx2W9MVDhre3vt1Ek89Gna7Ga3UwMQftMzFMiR9INEkzi5ooxB8P35lnaRgGt0hd19aYdR0ddn9R4fdsR6Ps5cOP+Ob+72YFnKJ+b5GQeta2IMpT2S1n8/Fb/YjN1/JmUw/dye4pjlZVM4wcmFC66tdSplBs4rH+9Fi75SWqicGR0vtmS04ez6dVpiwgOWPEMxgKhIf0KFTOGn/oUiW1MoFd/69ao1VGxUkVITK4i67coO58VA3mrJ7U/llhkAEgPWxiK25zTssuvFpDihkS3NrW40w3m/Wbe3O9E83ajT4TEYJvcUXhkL4gjhS0b3YkvgLsJsEdCdYr7iNnIXIzzh4UMn/686Siaq1tYGFhO0mlp1l1w5W0I/7Jpq/3LR53oI42sfHQV+OnyR6u3/zv2qqKGP3JF9eG0gzrNMylPt3bgqcZMIAKO05zo3Xie0ethxgkimYKL7+OBHjPyDQX8zZTys+pmnv3fzvy+6SVgseNeKaYyKSad8zmVbLjTtuYYKX0JGLPbKkydMGzgcEsIuxiLPhw3+aCeHAV3YxuWTSrsM3upyth/5lx/fzsvwwUukWaZ9A1LwrSSchl0WK1hez8d3VUR8mea2NxNOFIdqQ85bbAKXSLPVi1PhM8PJBG9EaYBMA0U8FkPOZPum5yEua8TAP7t+Dq/mUoocs0JMg="
+  on:
+    tags: true
+    condition: "$SANITY_CHECK = 1"
+  distributions: sdist bdist_wheel
+  skip_existing: true
