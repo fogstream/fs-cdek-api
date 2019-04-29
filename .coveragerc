@@ -1,0 +1,20 @@
+[run]
+source=cdek
+omit =
+  *__.py,
+  *apps.py,
+  *migrations/*,
+  *settings/*,
+  *tests/*,
+  *conftest.py,
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    def __str__
+    if self.debug:
+    raise AssertionError
+    raise NotImplementedError
+    if 0:
+    if __name__ == .__main__.:
