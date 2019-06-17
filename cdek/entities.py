@@ -234,12 +234,16 @@ class DeliveryRequest(AbstractElement):
         return address_element
 
     @staticmethod
-    def add_package(order_element: SubElement, size_a: int, size_b: int,
-                    size_c: int, number: Optional[str] = None,
-                    barcode: Optional[str] = None,
-                    weight: Optional[int] = None) -> SubElement:
+    def add_package(order_element: SubElement,
+                    size_a: Optional[int] = None, size_b: Optional[int] = None,
+                    size_c: Optional[int] = None, number: Optional[str] = None,
+                    barcode: Optional[str] = None, weight: Optional[int] = None
+                    ) -> SubElement:
         """
         Добавление посылки
+
+        Габариты упаковки заполняются только если указаны все три значения.
+
         :param order_element: Объект заказа
         :param int size_a: Габариты упаковки. Длина (в сантиметрах)
         :param int size_b: Габариты упаковки. Ширина (в сантиметрах)
@@ -256,6 +260,9 @@ class DeliveryRequest(AbstractElement):
         order_number = order_element.attrib['Number']
         package_number = number or order_number
         barcode = barcode or order_number
+
+        if not (size_a and size_b and size_c):
+            size_a = size_b = size_c = None
 
         package_element = ElementTree.SubElement(
             order_element,
