@@ -1,3 +1,4 @@
+from decimal import Decimal
 from random import randint
 
 import pytest
@@ -64,7 +65,7 @@ def delivery_request(delivery_type):
     delivery_request_obj.add_item(
         package_element=package,
         weight=500,
-        cost=1000,
+        cost=Decimal(1000),
         ware_key='12345678',
         comment='Духи',
     )

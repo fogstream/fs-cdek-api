@@ -1,0 +1,9 @@
+-r requirements.txt
+
+pytest>=5.0,<5.1
+pytest-cov<=3
+pytest-xdist>=1.29.0,<2
+
+isort==4.3.21
+
+flake8==3.7.7

@@ -7,8 +7,8 @@ from xml.etree.ElementTree import Element
 
 import requests
 
-from cdek.entities import CallCourier, DeliveryRequest, PreAlert
-from cdek.utils import clean_dict, get_secure, xml_to_dict, xml_to_string
+from .entities import CallCourier, DeliveryRequest, PreAlert
+from .utils import clean_dict, get_secure, xml_to_dict, xml_to_string
 
 
 class CDEKClient:
@@ -86,10 +86,11 @@ class CDEKClient:
             tariff_id: Optional[int] = None,
             tariffs: Optional[List[int]] = None,
     ) -> Dict:
-        """
-        Возвращает информацию о стоимости и сроках доставки
+        """Расчет стоимости и сроков доставки.
+
         Для отправителя и получателя обязателен один из параметров:
         *_city_id или *_city_postcode внутри *_city_data
+
         :param receiver_city_post_code:
         :param sender_city_post_code:
         :param tariff_id:
@@ -97,10 +98,9 @@ class CDEKClient:
         :param receiver_city_id: ID города получателя по базе СДЭК
         :param tariffs: список тарифов
         :param goods: список товаров
-        :return стоимость доставки
+        :return: стоимость доставки
         :rtype: dict
         """
-
         today = datetime.date.today().isoformat()
 
         params = {
@@ -141,9 +141,11 @@ class CDEKClient:
             point_type: str = 'PVZ',
             have_cash_less: Optional[bool] = None,
             allowed_cod: Optional[bool] = None) -> Dict[str, List]:
-        """
+        """Список ПВЗ.
+
         Возвращает списков пунктов самовывоза для указанного города,
         либо для всех если город не указан
+
         :param str city_post_code: Почтовый индекс города
         :param str city_id: Код города по базе СДЭК
         :param str point_type: Тип пункта выдачи ['PVZ', 'POSTOMAT', 'ALL']
@@ -152,7 +154,6 @@ class CDEKClient:
         :return: Список точек выдачи
         :rtype: list
         """
-
         response = self._exec_request(
             url=self.DELIVERY_POINTS_URL,
             data={
@@ -169,8 +170,10 @@ class CDEKClient:
     def get_regions(self, region_code_ext: Optional[int] = None,
                     region_code: Optional[int] = None,
                     page: int = 0, size: int = 1000) -> List[Dict]:
-        """
+        """Список регионов.
+
         Метод используется для получения детальной информации о регионах.
+
         :param region_code_ext: Код региона
         :param region_code:	Код региона в ИС СДЭК
         :param int page: Номер страницы выборки
@@ -178,7 +181,6 @@ class CDEKClient:
         :return: Список регионов по заданным параметрам
         :rtype: list
         """
-
         response = self._exec_request(
             url=self.REGIONS_URL,
             data={
@@ -195,8 +197,10 @@ class CDEKClient:
     def get_cities(self, region_code_ext: Optional[int] = None,
                    region_code: Optional[int] = None,
                    page: int = 0, size: int = 1000) -> List[Dict]:
-        """
+        """Список городов.
+
         Метод используется для получения детальной информации о городах.
+
         :param region_code_ext: Код региона
         :param region_code: Код региона в ИС СДЭК
         :param page: Номер страницы выборки
@@ -204,7 +208,6 @@ class CDEKClient:
         :return: Список городов по заданным параметрам
         :rtype: list
         """
-
         response = self._exec_request(
             url=self.CITIES_URL,
             data={
@@ -219,13 +222,12 @@ class CDEKClient:
         return response
 
     def create_orders(self, delivery_request: DeliveryRequest):
-        """
-        Создать заказ
+        """Создание заказа.
+
         :param DeliveryRequest delivery_request: Запрос доставки
         :return: Информация о созданном заказе
         :rtype: dict
         """
-
         xml = self._exec_xml_request(
             url=self.CREATE_ORDER_URL,
             xml_element=delivery_request.to_xml(),
@@ -236,10 +238,10 @@ class CDEKClient:
 
     def delete_orders(
             self, act_number: str, dispatch_numbers: List[str]) -> List[Dict]:
-        """
-        Удалить заказ
+        """Удаление заказа.
+
         :param str act_number: Номера акта приема-передачи.
-        Идентификатор заказа в ИС клиента СДЭК.
+            Идентификатор заказа в ИС клиента СДЭК.
         :param list dispatch_numbers: Номера заказов СДЭК
         :return: Удаленные заказы
         :rtype: dict
@@ -266,8 +268,10 @@ class CDEKClient:
                 xml.findall('*[@DispatchNumber]')]
 
     def call_courier(self, call_courier: CallCourier) -> Dict:
-        """
+        """Вызов курьера.
+
         Вызов курьера для забора посылки у ИМ
+
         :param CallCourier call_courier: Запрос вызова
         :return: Объект вызова
         :rtype: dict
@@ -280,9 +284,11 @@ class CDEKClient:
         return xml_to_dict(xml.find('Call'))
 
     def create_prealerts(self, pre_alert: PreAlert):
-        """
+        """Создание преалерта.
+
         Метод для создания сводного реестра (преалерта), содержащего
         все накладные, товары по которым передаются в СДЭК на доставку.
+
         :return: Результат создания преалерта
         """
         xml = self._exec_xml_request(
@@ -293,8 +299,8 @@ class CDEKClient:
         return [xml_to_dict(order) for order in xml.findall('Order')]
 
     def get_orders_info(self, orders_dispatch_numbers: List[int]) -> List[Dict]:
-        """
-        Информация по заказам
+        """Информация по заказам.
+
         :param orders_dispatch_numbers: список номеров отправлений СДЭК
         :returns list
         """
@@ -310,8 +316,11 @@ class CDEKClient:
 
         return [xml_to_dict(order) for order in xml.findall('Order')]
 
-    def get_orders_statuses(self, orders_dispatch_numbers: List[int],
-                            show_history: bool = True) -> List[Dict]:
+    def get_orders_statuses(
+            self,
+            orders_dispatch_numbers: List[int],
+            show_history: bool = True
+    ) -> List[Dict]:
         """
         Статусы заказов
         :param orders_dispatch_numbers: список номеров отправлений СДЭК
@@ -337,14 +346,16 @@ class CDEKClient:
 
         return [xml_to_dict(order) for order in xml.findall('Order')]
 
-    def get_orders_print(self, orders_dispatch_numbers: List[int],
-                         copy_count: int = 1) -> Optional[requests.Response]:
-        """
-        Печатная форма квитанции к заказу
+    def get_orders_print(
+            self,
+            orders_dispatch_numbers: List[int],
+            copy_count: int = 1
+    ) -> Optional[requests.Response]:
+        """Печатная форма квитанции к заказу.
+
         :param orders_dispatch_numbers: Список номеров отправлений СДЭК
         :param copy_count: Количество копий
         """
-
         orders_print_element = ElementTree.Element(
             'OrdersPrint',
             OrderCount=len(orders_dispatch_numbers),
@@ -366,15 +377,19 @@ class CDEKClient:
 
         return response if not response.content.startswith(b'<?xml') else None
 
-    def get_barcode_print(self, orders_dispatch_numbers: List[int],
-                          copy_count: int = 1) -> Optional[requests.Response]:
-        """
+    def get_barcode_print(
+            self,
+            orders_dispatch_numbers: List[int],
+            copy_count: int = 1
+    ) -> Optional[requests.Response]:
+        """Печать этикетки.
+
         Метод используется для формирования печатной формы
         этикетки для упаковки в формате pdf.
+
         :param list orders_dispatch_numbers: Список номеров отправлений СДЭК
         :param int copy_count: Количество копий
         """
-
         orders_packages_print_element = ElementTree.Element(
             'OrdersPackagesPrint',
             OrderCount=len(orders_dispatch_numbers),

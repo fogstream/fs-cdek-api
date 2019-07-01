@@ -193,8 +193,7 @@ def test_print_barcode(cdek_client: CDEKClient, delivery_request):
     pytest.param({'tariff_id': 3}, does_not_raise(), id='Single tariff'),
     pytest.param({'tariffs': [1, 3]}, does_not_raise(), id='Multiple tariffs'),
     pytest.param({}, pytest.raises(AttributeError), marks=pytest.mark.xfail,
-                 id='Without tariffs'),
-])
+                 id='Without tariffs')])
 def test_shipping_cost_calculator(cdek_client: CDEKClient, tariff: Dict,
                                   expectation):
     with expectation:

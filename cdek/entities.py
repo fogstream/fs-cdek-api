@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import datetime
+from decimal import Decimal
 from typing import Optional, Union
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element, SubElement
@@ -123,8 +124,8 @@ class CallCourier(AbstractElement):
     @staticmethod
     def add_address(call_element: SubElement, address_street: str,
                     address_house: str, address_flat: str) -> SubElement:
-        """
-        Добавление адреса забора посылки
+        """Добавление адреса забора посылки.
+
         :param call_element: Объект вызова курьера
         :param address_street: Улица отправителя
         :param address_house: Дом, корпус, строение отправителя
@@ -150,8 +151,8 @@ class DeliveryRequest(AbstractElement):
     orders = []
 
     def __init__(self, number: str, order_count: int = 1):
-        """
-        Инициализация запроса на доставку
+        """Инициализация запроса на доставку.
+
         :param number: Номер заказа
         :param order_count: Количество заказов в документе
         """
@@ -168,24 +169,25 @@ class DeliveryRequest(AbstractElement):
                   send_city_post_code: Optional[str] = None,
                   rec_city_code: Optional[int] = None,
                   rec_city_post_code: Optional[str] = None,
-                  shipping_price: Optional[float] = None,
+                  shipping_price: Optional[Union[Decimal, float]] = None,
                   comment: Optional[str] = None,
                   seller_name: Optional[str] = None) -> SubElement:
-        """
-        Добавление запроса на доставку
+        """Добавление запроса на доставку.
+
         :param str number: Номер отправления клиента (уникален в пределах
-        заказов одного клиента). Идентификатор заказа в ИС Клиента.
+            заказов одного клиента). Идентификатор заказа в ИС Клиента.
         :param int send_city_code: Код города отправителя из базы СДЭК
         :param str send_city_post_code: Почтовый индекс города отправителя
         :param int rec_city_code: Код города получателя из базы СДЭК
         :param str rec_city_post_code: Почтовый индекс города получателя
         :param str recipient_name: Получатель (ФИО)
         :param int tariff_type_code: Код типа тарифа
-        :param float shipping_price: Доп. сбор ИМ за доставку
+        :param shipping_price: Доп. сбор ИМ за доставку
         :param str phone: Телефон получателя
         :param str comment: Комментарий особые отметки по заказу
         :param str seller_name: Истинный продавец. Используется при печати
-        заказов для отображения настоящего продавца товара, торгового названия
+            заказов для отображения настоящего продавца товара,
+            торгового названия.
         :return: Объект заказа
         """
         order_element = ElementTree.SubElement(
@@ -209,17 +211,21 @@ class DeliveryRequest(AbstractElement):
         return order_element
 
     @staticmethod
-    def add_address(order_element: SubElement, street: Optional[str] = None,
-                    house: Optional[str] = None, flat: Optional[str] = None,
-                    pvz_code: Optional[str] = None) -> SubElement:
-        """
-        Добавление адреса доставки
+    def add_address(
+            order_element: SubElement,
+            street: Optional[str] = None,
+            house: Optional[str] = None,
+            flat: Optional[str] = None,
+            pvz_code: Optional[str] = None
+    ) -> SubElement:
+        """Добавление адреса доставки.
+
         :param order_element: Объект заказа
         :param str street: Улица получателя
         :param str house: Дом, корпус, строение получателя
         :param str flat: Квартира/Офис получателя
         :param str pvz_code: Код ПВЗ. Атрибут необходим только
-        для заказов с режимом доставки «до склада»
+            для заказов с режимом доставки «до склада»
         :return: Объект адреса
         """
         address_element = ElementTree.SubElement(order_element, 'Address')
@@ -234,13 +240,16 @@ class DeliveryRequest(AbstractElement):
         return address_element
 
     @staticmethod
-    def add_package(order_element: SubElement,
-                    size_a: Optional[int] = None, size_b: Optional[int] = None,
-                    size_c: Optional[int] = None, number: Optional[str] = None,
-                    barcode: Optional[str] = None, weight: Optional[int] = None
-                    ) -> SubElement:
-        """
-        Добавление посылки
+    def add_package(
+            order_element: SubElement,
+            size_a: Optional[int] = None,
+            size_b: Optional[int] = None,
+            size_c: Optional[int] = None,
+            number: Optional[str] = None,
+            barcode: Optional[str] = None,
+            weight: Optional[int] = None
+    ) -> SubElement:
+        """Добавление посылки.
 
         Габариты упаковки заполняются только если указаны все три значения.
 
@@ -249,11 +258,12 @@ class DeliveryRequest(AbstractElement):
         :param int size_b: Габариты упаковки. Ширина (в сантиметрах)
         :param int size_c: Габариты упаковки. Высота (в сантиметрах)
         :param number: Номер упаковки (можно использовать порядковый номер
-        упаковки заказа или номер заказа), уникален в пределах заказа.
-        Идентификатор заказа в ИС Клиента.
+            упаковки заказа или номер заказа), уникален в пределах заказа.
+            Идентификатор заказа в ИС Клиента.
+
         :param barcode: Штрих-код упаковки, идентификатор грузоместа.
-        Параметр используется для оперирования грузом на складах СДЭК),
-        уникален в пределах заказа. Идентификатор грузоместа в ИС Клиента.
+            Параметр используется для оперирования грузом на складах СДЭК),
+            уникален в пределах заказа. Идентификатор грузоместа в ИС Клиента.
         :param int weight: Общий вес (в граммах)
         """
 
@@ -279,10 +289,11 @@ class DeliveryRequest(AbstractElement):
 
     @staticmethod
     def add_item(package_element: SubElement, weight: int,
-                 ware_key: str, cost: float, payment: float = 0,
+                 ware_key: str, cost: Union[Decimal, float],
+                 payment: Union[Decimal, float] = 0,
                  amount: int = 1, comment: str = '') -> SubElement:
-        """
-        Добавление товара в посылку
+        """Добавление товара в посылку.
+
         :param package_element: Объект посылки
         :param weight: Вес (за единицу товара, в граммах)
         :param ware_key: Идентификатор/артикул товара/вложения
@@ -290,7 +301,7 @@ class DeliveryRequest(AbstractElement):
         :param payment: Оплата за товар при получении
         :param amount: Количество единиц одноименного товара (в штуках).
         :param comment: Наименование товара
-        (может также содержать описание товара: размер, цвет)
+            (может также содержать описание товара: размер, цвет)
         """
         item_element = ElementTree.SubElement(
             package_element,

@@ -33,8 +33,8 @@ def xml_to_string(xml: ElementTree) -> str:
 
 
 def clean_dict(data: Dict) -> Dict:
-    """
-    Очищаем словарь от ключей со значением None
+    """Очистка словаря от ключей со значением None.
+
     :param dict data: Словарь со значениями
     :return: Очищенный словарь
     :rtype: dict
@@ -51,11 +51,8 @@ def prepare_xml(data: Dict) -> Dict:
 
 def get_secure(secure_password: str,
                date: Union[datetime.datetime, datetime.date, str]) -> str:
-    """
-    Генерация секретного кода для запросов требующих авторизацию
-    secure = md5(date.'&'. secure password), где
-    secure password – секретный код выданный компанией СДЭК по запросу;
-    date – дата документа.
+    """Генерация секретного кода для запросов требующих авторизацию.
+
     :param str secure_password: Пароль для интеграции СДЭК
     :param date: дата документа
     :return: Секретный код

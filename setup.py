@@ -14,10 +14,14 @@ MAINTAINER = 'fadedDexofan'
 REQUIRES_PYTHON = '>=3.6.0'
 VERSION = None
 
-REQUIRED = ['requests', 'boltons']
+REQUIRED = ['requests>=2.22.0,<3', 'boltons>=19.1.0,<20']
 
 EXTRAS = {
-    'for_tests': ['pytest>=4.4.0', 'pytest-cov', 'pytest-xdist'],
+    'for_tests': [
+        'pytest>=5.0,<5.1',
+        'pytest-cov<=3',
+        'pytest-xdist>=1.29.0,<2',
+    ],
 }
 
 # ------------------------------------------------
