@@ -204,6 +204,7 @@ def test_shipping_cost_calculator(cdek_client: CDEKClient, tariff: Dict,
                 {'weight': 0.3, 'length': 10, 'width': 7, 'height': 5},
                 {'weight': 0.1, 'volume': 0.1},
             ],
+            services=[{'id': 2, 'param': 1000}],
             **tariff,
         )
 

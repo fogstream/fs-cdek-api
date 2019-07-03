@@ -5,7 +5,6 @@ from typing import Optional, Union
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element, SubElement
 
-
 Date = Union[datetime.datetime, datetime.date]
 
 
@@ -288,10 +287,15 @@ class DeliveryRequest(AbstractElement):
         return package_element
 
     @staticmethod
-    def add_item(package_element: SubElement, weight: int,
-                 ware_key: str, cost: Union[Decimal, float],
-                 payment: Union[Decimal, float] = 0,
-                 amount: int = 1, comment: str = '') -> SubElement:
+    def add_item(
+            package_element: SubElement,
+            weight: int,
+            ware_key: str,
+            cost: Union[Decimal, float],
+            payment: Union[Decimal, float] = 0,
+            amount: int = 1,
+            comment: str = ''
+    ) -> SubElement:
         """Добавление товара в посылку.
 
         :param package_element: Объект посылки
@@ -313,6 +317,27 @@ class DeliveryRequest(AbstractElement):
         item_element.attrib['Cost'] = cost
         item_element.attrib['Payment'] = payment
         item_element.attrib['Comment'] = comment
+
+        return item_element
+
+    @staticmethod
+    def add_service(order_element: SubElement,
+                    code: int, count: Optional[int] = None) -> SubElement:
+        """Добавление дополнительной услуги к заказу.
+
+        :param order_element: Объект заказа
+        :param code: Тип дополнительной услуги
+        :param count: Количество упаковок
+        """
+
+        add_service_element = ElementTree.SubElement(
+            order_element,
+            'AddService',
+            ServiceCode=code,
+            Count=count,
+        )
+
+        return add_service_element
 
     def to_xml(self) -> Element:
         return self.delivery_request_element

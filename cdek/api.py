@@ -85,6 +85,7 @@ class CDEKClient:
             receiver_city_post_code: Optional[str] = None,
             tariff_id: Optional[int] = None,
             tariffs: Optional[List[int]] = None,
+            services: List[dict] = None,
     ) -> Dict:
         """Расчет стоимости и сроков доставки.
 
@@ -98,6 +99,7 @@ class CDEKClient:
         :param receiver_city_id: ID города получателя по базе СДЭК
         :param tariffs: список тарифов
         :param goods: список товаров
+        :param services: список дополнительных услуг
         :return: стоимость доставки
         :rtype: dict
         """
@@ -111,6 +113,7 @@ class CDEKClient:
             'senderCityPostCode': sender_city_post_code,
             'receiverCityPostCode': receiver_city_post_code,
             'goods': goods,
+            'services': services,
         }
 
         if not self._test:
