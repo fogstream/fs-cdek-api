@@ -39,7 +39,7 @@ def cdek_client():
 # pylint: disable=redefined-outer-name
 @pytest.fixture
 def delivery_request(delivery_type):
-    delivery_request_obj = DeliveryRequest(number='12345678')
+    delivery_request_obj = DeliveryRequest(number=randint(100000, 1000000))
     order = delivery_request_obj.add_order(
         number=randint(100000, 1000000),
         recipient_name='Иванов Иван Иванович',
@@ -58,7 +58,7 @@ def delivery_request(delivery_type):
         size_a=10,
         size_b=10,
         size_c=10,
-        number=randint(100000, 1000000),
+        number=str(randint(100000, 1000000)),
         barcode=randint(100000, 1000000),
         weight=600,
     )
@@ -66,7 +66,7 @@ def delivery_request(delivery_type):
         package_element=package,
         weight=500,
         cost=Decimal(1000),
-        ware_key='12345678',
+        ware_key=str(randint(100000, 1000000)),
         comment='Духи',
     )
 

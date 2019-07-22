@@ -59,6 +59,8 @@ class CDEKClient:
         else:
             raise NotImplementedError(f'Unknown method "{method}"')
 
+        response.raise_for_status()
+
         return response
 
     def _exec_xml_request(self, url: str, xml_element: Element,
@@ -79,8 +81,10 @@ class CDEKClient:
         return response
 
     def get_shipping_cost(
-            self, sender_city_id: int, receiver_city_id: int,
+            self,
             goods: List[Dict],
+            sender_city_id: Optional[int] = None,
+            receiver_city_id: Optional[int] = None,
             sender_city_post_code: Optional[str] = None,
             receiver_city_post_code: Optional[str] = None,
             tariff_id: Optional[int] = None,
@@ -92,9 +96,9 @@ class CDEKClient:
         Для отправителя и получателя обязателен один из параметров:
         *_city_id или *_city_postcode внутри *_city_data
 
-        :param receiver_city_post_code:
-        :param sender_city_post_code:
-        :param tariff_id:
+        :param receiver_city_post_code: Почтовый индекс города получателя
+        :param sender_city_post_code: Почтовый индекс города отправителя
+        :param tariff_id: ID тарифа
         :param sender_city_id: ID города отправителя по базе СДЭК
         :param receiver_city_id: ID города получателя по базе СДЭК
         :param tariffs: список тарифов
@@ -134,9 +138,10 @@ class CDEKClient:
         response = requests.post(
             self.CALCULATOR_URL,
             data=json.dumps(params),
-        ).json()
+        )
+        response.raise_for_status()
 
-        return response
+        return response.json()
 
     def get_delivery_points(
             self, city_post_code: Optional[Union[int, str]] = None,
