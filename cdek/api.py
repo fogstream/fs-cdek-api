@@ -46,16 +46,18 @@ class CDEKClient:
         self._test = test
 
     def _exec_request(self, url: str, data: Dict, method: str = 'GET',
-                      stream: bool = False) -> requests.Response:
+                      stream: bool = False, **kwargs) -> requests.Response:
         if isinstance(data, dict):
             data = clean_dict(data)
 
         url = self._api_url + url
 
         if method == 'GET':
-            response = requests.get(f'{url}?{urlencode(data)}', stream=stream)
+            response = requests.get(
+                f'{url}?{urlencode(data)}', stream=stream, **kwargs,
+            )
         elif method == 'POST':
-            response = requests.post(url, data=data, stream=stream)
+            response = requests.post(url, data=data, stream=stream, **kwargs)
         else:
             raise NotImplementedError(f'Unknown method "{method}"')
 
@@ -171,6 +173,7 @@ class CDEKClient:
                 'havecashless': have_cash_less,
                 'allowedcode': allowed_cod,
             },
+            timeout=60,
         ).json()
 
         return response
@@ -198,6 +201,7 @@ class CDEKClient:
                 'page': page,
                 'size': size,
             },
+            timeout=60,
         ).json()
 
         return response
@@ -225,6 +229,7 @@ class CDEKClient:
                 'page': page,
                 'size': size,
             },
+            timeout=60,
         ).json()
 
         return response
