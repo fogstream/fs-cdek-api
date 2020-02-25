@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 import abc
 from abc import abstractmethod
 import datetime

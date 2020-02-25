@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 import datetime
 import hashlib
 from typing import Dict, Union

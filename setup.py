@@ -14,7 +14,7 @@ MAINTAINER = 'fadedDexofan'
 REQUIRES_PYTHON = '>=3.6.0'
 VERSION = None
 
-REQUIRED = ['requests>=2.22.0,<3', 'boltons>=19.1.0,<20']
+REQUIRED = ['requests>=2.22.0,<3', 'boltons>=19.1.0,<20', 'future-fstrings>=1.2.0,<2']
 
 EXTRAS = {
     'for_tests': [

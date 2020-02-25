@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 import datetime
 import json
 from typing import Dict, List, Optional, Union
