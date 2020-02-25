@@ -1,6 +1,7 @@
 # -*- coding: future_fstrings -*-
 import datetime
 import hashlib
+import six
 from typing import Dict, Union
 from xml.etree import ElementTree
 from xml.etree.ElementTree import tostring
@@ -45,7 +46,7 @@ def clean_dict(data: Dict) -> Dict:
 
 def prepare_xml(data: Dict) -> Dict:
     data = clean_dict(data)
-    data = remap(data, lambda p, k, v: (k, str(v)))
+    data = remap(data, lambda p, k, v: (k, six.text_type(v)))
 
     return data
 
