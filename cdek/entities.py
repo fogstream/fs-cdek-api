@@ -15,7 +15,7 @@ ABC = abc.ABCMeta('ABC', (object,), {'__slots__': ()})
 
 class AbstractElement(ABC):
     @abstractmethod
-    def to_xml(self) -> Element:
+    def to_xml(self):
         raise NotImplementedError
 
 
@@ -23,7 +23,7 @@ class PreAlert(AbstractElement):
     pre_alert_element = None
     orders = []
 
-    def __init__(self, planned_meeting_date: Date, pvz_code: str):
+    def __init__(self, planned_meeting_date, pvz_code):
         """
         Инициализация создания сводного реестра
         :param planned_meeting_date: Дата планируемой передачи.
@@ -35,8 +35,8 @@ class PreAlert(AbstractElement):
             PvzCode=pvz_code,
         )
 
-    def add_order(self, dispatch_number: Optional[str],
-                  number: Optional[str] = None) -> SubElement:
+    def add_order(self, dispatch_number,
+                  number = None):
         """
         Добавление заказа к преалерту
         :param str dispatch_number: Номер заказа в системе СДЭК
@@ -54,7 +54,7 @@ class PreAlert(AbstractElement):
 
         return order_element
 
-    def to_xml(self) -> Element:
+    def to_xml(self):
         return self.pre_alert_element
 
 
@@ -62,7 +62,7 @@ class CallCourier(AbstractElement):
     call_courier_element = None
     calls = []
 
-    def __init__(self, call_count: int = 1):
+    def __init__(self, call_count = 1):
         """
         Инициализация вызова курьера для забора груза
         :param int call_count: Количество заявок для вызова курьера в документе
@@ -72,17 +72,17 @@ class CallCourier(AbstractElement):
             CallCount=call_count,
         )
 
-    def add_call(self, date: datetime.date, time_begin: datetime.time,
-                 time_end: datetime.time,
-                 dispatch_number: Optional[int] = None,
-                 sender_city_id: Optional[int] = None,
-                 sender_phone: Optional[str] = None,
-                 sender_name: Optional[str] = None,
-                 weight: Optional[int] = None,
-                 comment: Optional[str] = None,
-                 lunch_begin: Optional[datetime.time] = None,
-                 lunch_end: Optional[datetime.time] = None,
-                 ignore_time: bool = False) -> SubElement:
+    def add_call(self, date, time_begin,
+                 time_end,
+                 dispatch_number = None,
+                 sender_city_id = None,
+                 sender_phone = None,
+                 sender_name = None,
+                 weight = None,
+                 comment = None,
+                 lunch_begin = None,
+                 lunch_end = None,
+                 ignore_time = False):
         """
         Добавление вызова курьера
         :param date: дата ожидания курьера
@@ -126,8 +126,8 @@ class CallCourier(AbstractElement):
         return call_element
 
     @staticmethod
-    def add_address(call_element: SubElement, address_street: str,
-                    address_house: str, address_flat: str) -> SubElement:
+    def add_address(call_element, address_street,
+                    address_house, address_flat):
         """Добавление адреса забора посылки.
 
         :param call_element: Объект вызова курьера
@@ -146,7 +146,7 @@ class CallCourier(AbstractElement):
 
         return address_element
 
-    def to_xml(self) -> Element:
+    def to_xml(self):
         return self.call_courier_element
 
 
@@ -154,7 +154,7 @@ class DeliveryRequest(AbstractElement):
     delivery_request_element = None
     orders = []
 
-    def __init__(self, number: str, order_count: int = 1):
+    def __init__(self, number, order_count = 1):
         """Инициализация запроса на доставку.
 
         :param number: Номер заказа
@@ -167,15 +167,15 @@ class DeliveryRequest(AbstractElement):
             OrderCount=order_count,
         )
 
-    def add_order(self, number: str, tariff_type_code: int,
-                  recipient_name: str, phone: str,
-                  send_city_code: Optional[int] = None,
-                  send_city_post_code: Optional[str] = None,
-                  rec_city_code: Optional[int] = None,
-                  rec_city_post_code: Optional[str] = None,
-                  shipping_price: Optional[Union[Decimal, float]] = None,
-                  comment: Optional[str] = None,
-                  seller_name: Optional[str] = None) -> SubElement:
+    def add_order(self, number, tariff_type_code,
+                  recipient_name, phone,
+                  send_city_code = None,
+                  send_city_post_code = None,
+                  rec_city_code = None,
+                  rec_city_post_code = None,
+                  shipping_price = None,
+                  comment = None,
+                  seller_name = None):
         """Добавление запроса на доставку.
 
         :param str number: Номер отправления клиента (уникален в пределах
@@ -216,12 +216,12 @@ class DeliveryRequest(AbstractElement):
 
     @staticmethod
     def add_address(
-            order_element: SubElement,
-            street: Optional[str] = None,
-            house: Optional[str] = None,
-            flat: Optional[str] = None,
-            pvz_code: Optional[str] = None
-    ) -> SubElement:
+            order_element,
+            street = None,
+            house = None,
+            flat = None,
+            pvz_code = None
+    ):
         """Добавление адреса доставки.
 
         :param order_element: Объект заказа
@@ -245,14 +245,14 @@ class DeliveryRequest(AbstractElement):
 
     @staticmethod
     def add_package(
-            order_element: SubElement,
-            size_a: Optional[int] = None,
-            size_b: Optional[int] = None,
-            size_c: Optional[int] = None,
-            number: Optional[str] = None,
-            barcode: Optional[str] = None,
-            weight: Optional[int] = None
-    ) -> SubElement:
+            order_element,
+            size_a = None,
+            size_b = None,
+            size_c = None,
+            number = None,
+            barcode = None,
+            weight = None
+    ):
         """Добавление посылки.
 
         Габариты упаковки заполняются только если указаны все три значения.
@@ -293,14 +293,14 @@ class DeliveryRequest(AbstractElement):
 
     @staticmethod
     def add_item(
-            package_element: SubElement,
-            weight: int,
-            ware_key: str,
-            cost: Union[Decimal, float],
-            payment: Union[Decimal, float] = 0,
-            amount: int = 1,
-            comment: str = ''
-    ) -> SubElement:
+            package_element,
+            weight,
+            ware_key,
+            cost,
+            payment = 0,
+            amount = 1,
+            comment = ''
+    ):
         """Добавление товара в посылку.
 
         :param package_element: Объект посылки
@@ -326,8 +326,8 @@ class DeliveryRequest(AbstractElement):
         return item_element
 
     @staticmethod
-    def add_service(order_element: SubElement,
-                    code: int, count: Optional[int] = None) -> SubElement:
+    def add_service(order_element,
+                    code, count = None):
         """Добавление дополнительной услуги к заказу.
 
         :param order_element: Объект заказа
@@ -344,5 +344,5 @@ class DeliveryRequest(AbstractElement):
 
         return add_service_element
 
-    def to_xml(self) -> Element:
+    def to_xml(self):
         return self.delivery_request_element

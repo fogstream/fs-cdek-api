@@ -11,7 +11,7 @@ from cdek.api import CDEKClient
 from cdek.entities import CallCourier, PreAlert
 
 
-def test_get_regions(cdek_client: CDEKClient):
+def test_get_regions(cdek_client):
     regions = cdek_client.get_regions(region_code_ext=27)
 
     assert regions
@@ -19,7 +19,7 @@ def test_get_regions(cdek_client: CDEKClient):
     assert regions[0]['regionName'] == 'Хабаровский'
 
 
-def test_get_cities(cdek_client: CDEKClient):
+def test_get_cities(cdek_client):
     cities = cdek_client.get_cities(region_code_ext=27)
 
     assert cities
@@ -27,7 +27,7 @@ def test_get_cities(cdek_client: CDEKClient):
     assert cities[0]['region'] == 'Хабаровский'
 
 
-def test_get_pvz_list(cdek_client: CDEKClient):
+def test_get_pvz_list(cdek_client):
     response = cdek_client.get_delivery_points(city_post_code=680000)
 
     assert response
@@ -37,7 +37,7 @@ def test_get_pvz_list(cdek_client: CDEKClient):
     assert pvz_list[0]['city'] == 'Хабаровск'
 
 
-def test_order_creation(cdek_client: CDEKClient, delivery_request):
+def test_order_creation(cdek_client, delivery_request):
     send_orders = cdek_client.create_orders(delivery_request)
 
     assert send_orders
@@ -47,7 +47,7 @@ def test_order_creation(cdek_client: CDEKClient, delivery_request):
     assert 'Number' in order
 
 
-def test_order_info(cdek_client: CDEKClient, delivery_request):
+def test_order_info(cdek_client, delivery_request):
     send_orders = cdek_client.create_orders(delivery_request)
 
     assert send_orders
@@ -67,7 +67,7 @@ def test_order_info(cdek_client: CDEKClient, delivery_request):
     assert order_info['DispatchNumber'] == dispatch_number
 
 
-def test_order_status_info(cdek_client: CDEKClient, delivery_request):
+def test_order_status_info(cdek_client, delivery_request):
     send_orders = cdek_client.create_orders(delivery_request)
 
     assert send_orders
@@ -88,7 +88,7 @@ def test_order_status_info(cdek_client: CDEKClient, delivery_request):
     assert status_info['Status']['Code'] == '1'  # Создан
 
 
-def test_courier_call(cdek_client: CDEKClient, delivery_request):
+def test_courier_call(cdek_client, delivery_request):
     send_orders = cdek_client.create_orders(delivery_request)
 
     assert send_orders
@@ -122,7 +122,7 @@ def test_courier_call(cdek_client: CDEKClient, delivery_request):
     assert 'Number' in call
 
 
-def test_courier_call_with_lunch(cdek_client: CDEKClient, delivery_request):
+def test_courier_call_with_lunch(cdek_client, delivery_request):
     send_orders = cdek_client.create_orders(delivery_request)
 
     assert send_orders
@@ -159,7 +159,7 @@ def test_courier_call_with_lunch(cdek_client: CDEKClient, delivery_request):
     assert 'Number' in call
 
 
-def test_print_orders(cdek_client: CDEKClient, delivery_request):
+def test_print_orders(cdek_client, delivery_request):
     send_orders = cdek_client.create_orders(delivery_request)
 
     assert send_orders
@@ -180,7 +180,7 @@ def test_print_orders(cdek_client: CDEKClient, delivery_request):
     reason="The cause if the error isn't clear: "
            "fail creating pdf on the cdek side."
 )
-def test_print_barcode(cdek_client: CDEKClient, delivery_request):
+def test_print_barcode(cdek_client, delivery_request):
     send_orders = cdek_client.create_orders(delivery_request)
 
     assert send_orders
@@ -202,7 +202,7 @@ def test_print_barcode(cdek_client: CDEKClient, delivery_request):
     pytest.param({'tariffs': [1, 3]}, does_not_raise(), id='Multiple tariffs'),
     pytest.param({}, pytest.raises(AttributeError), marks=pytest.mark.xfail,
                  id='Without tariffs')])
-def test_shipping_cost_calculator(cdek_client: CDEKClient, tariff: Dict,
+def test_shipping_cost_calculator(cdek_client, tariff,
                                   expectation):
     with expectation:
         shipping_costs = cdek_client.get_shipping_cost(
@@ -223,7 +223,7 @@ def test_shipping_cost_calculator(cdek_client: CDEKClient, tariff: Dict,
         assert result['tariffId'] == 3
 
 
-def test_shipping_cost_with_auth_data(cdek_client: CDEKClient):
+def test_shipping_cost_with_auth_data(cdek_client):
     cdek_client._test = False
 
     shipping_costs = cdek_client.get_shipping_cost(
@@ -239,7 +239,7 @@ def test_shipping_cost_with_auth_data(cdek_client: CDEKClient):
     assert 'error' in shipping_costs
 
 
-def test_order_delete(cdek_client: CDEKClient, delivery_request):
+def test_order_delete(cdek_client, delivery_request):
     send_orders = cdek_client.create_orders(delivery_request)
 
     assert send_orders
@@ -277,7 +277,7 @@ def test_order_delete(cdek_client: CDEKClient, delivery_request):
     reason="The cause if the error isn't clear: "
            "500 from CDEK"
 )
-def test_create_prealerts(cdek_client: CDEKClient, delivery_request):
+def test_create_prealerts(cdek_client, delivery_request):
     send_orders = cdek_client.create_orders(delivery_request)
 
     assert send_orders

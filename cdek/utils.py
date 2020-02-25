@@ -12,7 +12,7 @@ from boltons.iterutils import remap
 ARRAY_TAGS = {'State', 'Delay', 'Good', 'Fail', 'Item', 'Package'}
 
 
-def xml_to_dict(xml: ElementTree) -> Dict:
+def xml_to_dict(xml):
     result = xml.attrib
 
     for child in xml:
@@ -25,7 +25,7 @@ def xml_to_dict(xml: ElementTree) -> Dict:
     return result
 
 
-def xml_to_string(xml: ElementTree) -> str:
+def xml_to_string(xml):
     tree = ElementTree.ElementTree(xml)
 
     for elem in tree.iter():
@@ -34,7 +34,7 @@ def xml_to_string(xml: ElementTree) -> str:
     return tostring(tree.getroot(), encoding='UTF-8')
 
 
-def clean_dict(data: Dict) -> Dict:
+def clean_dict(data):
     """Очистка словаря от ключей со значением None.
 
     :param dict data: Словарь со значениями
@@ -44,15 +44,15 @@ def clean_dict(data: Dict) -> Dict:
     return remap(data, lambda p, k, v: v is not None)
 
 
-def prepare_xml(data: Dict) -> Dict:
+def prepare_xml(data):
     data = clean_dict(data)
     data = remap(data, lambda p, k, v: (k, six.text_type(v)))
 
     return data
 
 
-def get_secure(secure_password: str,
-               date: Union[datetime.datetime, datetime.date, str]) -> str:
+def get_secure(secure_password,
+               date):
     """Генерация секретного кода для запросов требующих авторизацию.
 
     :param str secure_password: Пароль для интеграции СДЭК

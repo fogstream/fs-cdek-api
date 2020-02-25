@@ -41,16 +41,16 @@ class CDEKClient:
     # Вызов курьера
     CALL_COURIER_URL = '/call_courier.php'
 
-    def __init__(self, account: str, secure_password: str,
-                 api_url: str = 'http://integration.cdek.ru',
-                 test: bool = False):
+    def __init__(self, account, secure_password,
+                 api_url = 'http://integration.cdek.ru',
+                 test = False):
         self._account = account
         self._secure_password = secure_password
         self._api_url = api_url
         self._test = test
 
-    def _exec_request(self, url: str, data: Dict, method: str = 'GET',
-                      stream: bool = False, **kwargs) -> requests.Response:
+    def _exec_request(self, url, data, method = 'GET',
+                      stream = False, **kwargs):
         if isinstance(data, dict):
             data = clean_dict(data)
 
@@ -69,8 +69,8 @@ class CDEKClient:
 
         return response
 
-    def _exec_xml_request(self, url: str, xml_element: Element,
-                          parse: bool = True) -> ElementTree:
+    def _exec_xml_request(self, url, xml_element,
+                          parse = True):
         now = datetime.date.today().isoformat()
         xml_element.attrib['Date'] = now
         xml_element.attrib['Account'] = self._account
@@ -88,15 +88,15 @@ class CDEKClient:
 
     def get_shipping_cost(
             self,
-            goods: List[Dict],
-            sender_city_id: Optional[int] = None,
-            receiver_city_id: Optional[int] = None,
-            sender_city_post_code: Optional[str] = None,
-            receiver_city_post_code: Optional[str] = None,
-            tariff_id: Optional[int] = None,
-            tariffs: Optional[List[int]] = None,
-            services: List[dict] = None,
-    ) -> Dict:
+            goods,
+            sender_city_id = None,
+            receiver_city_id = None,
+            sender_city_post_code = None,
+            receiver_city_post_code = None,
+            tariff_id = None,
+            tariffs = None,
+            services = None,
+    ):
         """Расчет стоимости и сроков доставки.
 
         Для отправителя и получателя обязателен один из параметров:
@@ -150,11 +150,11 @@ class CDEKClient:
         return response.json()
 
     def get_delivery_points(
-            self, city_post_code: Optional[Union[int, str]] = None,
-            city_id: Optional[Union[str, int]] = None,
-            point_type: str = 'PVZ',
-            have_cash_less: Optional[bool] = None,
-            allowed_cod: Optional[bool] = None) -> Dict[str, List]:
+            self, city_post_code = None,
+            city_id = None,
+            point_type = 'PVZ',
+            have_cash_less = None,
+            allowed_cod = None):
         """Список ПВЗ.
 
         Возвращает списков пунктов самовывоза для указанного города,
@@ -182,9 +182,9 @@ class CDEKClient:
 
         return response
 
-    def get_regions(self, region_code_ext: Optional[int] = None,
-                    region_code: Optional[int] = None,
-                    page: int = 0, size: int = 1000) -> List[Dict]:
+    def get_regions(self, region_code_ext = None,
+                    region_code = None,
+                    page = 0, size = 1000):
         """Список регионов.
 
         Метод используется для получения детальной информации о регионах.
@@ -210,9 +210,9 @@ class CDEKClient:
 
         return response
 
-    def get_cities(self, region_code_ext: Optional[int] = None,
-                   region_code: Optional[int] = None,
-                   page: int = 0, size: int = 1000) -> List[Dict]:
+    def get_cities(self, region_code_ext = None,
+                   region_code = None,
+                   page = 0, size = 1000):
         """Список городов.
 
         Метод используется для получения детальной информации о городах.
@@ -238,7 +238,7 @@ class CDEKClient:
 
         return response
 
-    def create_orders(self, delivery_request: DeliveryRequest):
+    def create_orders(self, delivery_request):
         """Создание заказа.
 
         :param DeliveryRequest delivery_request: Запрос доставки
@@ -254,7 +254,7 @@ class CDEKClient:
                 xml.findall('*[@DispatchNumber]')]
 
     def delete_orders(
-            self, act_number: str, dispatch_numbers: List[str]) -> List[Dict]:
+            self, act_number, dispatch_numbers):
         """Удаление заказа.
 
         :param str act_number: Номера акта приема-передачи.
@@ -284,7 +284,7 @@ class CDEKClient:
         return [xml_to_dict(order) for order in
                 xml.findall('*[@DispatchNumber]')]
 
-    def call_courier(self, call_courier: CallCourier) -> Dict:
+    def call_courier(self, call_courier):
         """Вызов курьера.
 
         Вызов курьера для забора посылки у ИМ
@@ -300,7 +300,7 @@ class CDEKClient:
 
         return xml_to_dict(xml.find('Call'))
 
-    def create_prealerts(self, pre_alert: PreAlert):
+    def create_prealerts(self, pre_alert):
         """Создание преалерта.
 
         Метод для создания сводного реестра (преалерта), содержащего
@@ -315,7 +315,7 @@ class CDEKClient:
 
         return [xml_to_dict(order) for order in xml.findall('Order')]
 
-    def get_orders_info(self, orders_dispatch_numbers: List[int]) -> List[Dict]:
+    def get_orders_info(self, orders_dispatch_numbers):
         """Информация по заказам.
 
         :param orders_dispatch_numbers: список номеров отправлений СДЭК
@@ -335,9 +335,9 @@ class CDEKClient:
 
     def get_orders_statuses(
             self,
-            orders_dispatch_numbers: List[int],
-            show_history: bool = True
-    ) -> List[Dict]:
+            orders_dispatch_numbers,
+            show_history = True
+    ):
         """
         Статусы заказов
         :param orders_dispatch_numbers: список номеров отправлений СДЭК
@@ -365,9 +365,9 @@ class CDEKClient:
 
     def get_orders_print(
             self,
-            orders_dispatch_numbers: List[int],
-            copy_count: int = 1
-    ) -> Optional[requests.Response]:
+            orders_dispatch_numbers,
+            copy_count = 1
+    ):
         """Печатная форма квитанции к заказу.
 
         :param orders_dispatch_numbers: Список номеров отправлений СДЭК
@@ -396,9 +396,9 @@ class CDEKClient:
 
     def get_barcode_print(
             self,
-            orders_dispatch_numbers: List[int],
-            copy_count: int = 1
-    ) -> Optional[requests.Response]:
+            orders_dispatch_numbers,
+            copy_count = 1
+    ):
         """Печать этикетки.
 
         Метод используется для формирования печатной формы
