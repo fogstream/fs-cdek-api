@@ -1,4 +1,7 @@
-from contextlib import ExitStack as does_not_raise
+try:
+    from contextlib import ExitStack as does_not_raise
+except ImportError:
+    from contextlib2 import ExitStack as does_not_raise
 import datetime
 from typing import Dict
 

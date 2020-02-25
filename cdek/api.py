@@ -1,7 +1,10 @@
 import datetime
 import json
 from typing import Dict, List, Optional, Union
-from urllib.parse import urlencode
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element
 

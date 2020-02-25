@@ -1,4 +1,5 @@
-from abc import ABC, abstractmethod
+import abc
+from abc import abstractmethod
 import datetime
 from decimal import Decimal
 from typing import Optional, Union
@@ -6,6 +7,9 @@ from xml.etree import ElementTree
 from xml.etree.ElementTree import Element, SubElement
 
 Date = Union[datetime.datetime, datetime.date]
+
+# compatible with Python 2 *and* 3:
+ABC = abc.ABCMeta('ABC', (object,), {'__slots__': ()})
 
 
 class AbstractElement(ABC):
