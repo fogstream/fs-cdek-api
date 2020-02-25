@@ -58,7 +58,7 @@ class CDEKClient:
 
         if method == 'GET':
             response = requests.get(
-                f'{url}?{urlencode(data)}', stream=stream, **kwargs,
+                f'{url}?{urlencode(data)}', stream=stream, **kwargs
             )
         elif method == 'POST':
             response = requests.post(url, data=data, stream=stream, **kwargs)
