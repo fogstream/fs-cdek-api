@@ -82,7 +82,7 @@ class CDEKClient:
             method='POST',
         )
         if parse:
-            response = ElementTree.fromstring(response.text)
+            response = ElementTree.fromstring(response.content)
 
         return response
 
