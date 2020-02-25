@@ -25,6 +25,9 @@ $ pip install fs-cdek-api
 
 ### Запрос доставки
 ```python
+from cdek.entities import DeliveryRequest
+from random import randint
+from cdek.api import CDEKClient
 delivery_request = DeliveryRequest(number='12345678')
 order = delivery_request.add_order(
     number=randint(100000, 1000000),
