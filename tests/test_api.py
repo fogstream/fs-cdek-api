@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 try:
     from contextlib import ExitStack as does_not_raise
 except ImportError:
