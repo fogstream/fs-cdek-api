@@ -11,7 +11,7 @@ DESCRIPTION = 'CDEK API wrapper'
 URL = 'https://github.com/fogstream/fs-cdek-api'
 EMAIL = 'fadeddexofan@gmail.com'
 MAINTAINER = 'fadedDexofan'
-REQUIRES_PYTHON = '>=3.6.0'
+REQUIRES_PYTHON = '>=2.7.0'
 VERSION = None
 
 REQUIRED = ['requests>=2.22.0,<3', 'boltons>=19.1.0,<20', 'future-fstrings>=1.2.0,<2', 'six>=1.14.0,<2']
