@@ -1,6 +1,6 @@
 -r requirements.txt
 
-pytest>=5.0,<5.1
+pytest>=4.6,<5.0
 pytest-cov<=3
 pytest-xdist>=1.29.0,<2
 

@@ -11,14 +11,14 @@ DESCRIPTION = 'CDEK API wrapper'
 URL = 'https://github.com/fogstream/fs-cdek-api'
 EMAIL = 'fadeddexofan@gmail.com'
 MAINTAINER = 'fadedDexofan'
-REQUIRES_PYTHON = '>=3.6.0'
+REQUIRES_PYTHON = '>=2.7.0'
 VERSION = None
 
-REQUIRED = ['requests>=2.22.0,<3', 'boltons>=19.1.0,<20']
+REQUIRED = ['requests>=2.22.0,<3', 'boltons>=19.1.0,<20', 'future-fstrings>=1.2.0,<2', 'six>=1.14.0,<2']
 
 EXTRAS = {
     'for_tests': [
-        'pytest>=5.0,<5.1',
+        'pytest>=4.6,<5.0',
         'pytest-cov<=3',
         'pytest-xdist>=1.29.0,<2',
     ],
@@ -69,13 +69,13 @@ class UploadCommand(Command):
             pass
 
         self.status('Building Source and Wheel (universal) distribution…')
-        os.system(f'{sys.executable} setup.py sdist bdist_wheel --universal')
+        os.system('{} setup.py sdist bdist_wheel --universal'.format(sys.executable))
 
         self.status('Uploading the package to PyPI via Twine…')
         os.system('twine upload dist/*')
 
         self.status('Pushing git tags…')
-        os.system(f'git tag v{about["__version__"]}')
+        os.system('git tag v{}'.format(about["__version__"]))
         os.system('git push --tags')
 
         sys.exit()

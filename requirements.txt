@@ -1,2 +1,4 @@
 requests>=2.22.0,<3
 boltons>=19.1.0,<20
+future-fstrings>=1.2.0,<2
+six>=1.14.0,<2

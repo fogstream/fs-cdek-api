@@ -12,7 +12,7 @@ CDEK-API
 
 Установка
 ------------
-Для работы требуется Python 3.6+
+Для работы требуется Python 2.7+
 Для установки используйте [pipenv](http://pipenv.org/) (или pip):
 
 ```bash
@@ -25,15 +25,18 @@ $ pip install fs-cdek-api
 
 ### Запрос доставки
 ```python
+from cdek.entities import DeliveryRequest
+from random import randint
+from cdek.api import CDEKClient
 delivery_request = DeliveryRequest(number='12345678')
 order = delivery_request.add_order(
     number=randint(100000, 1000000),
-    recipient_name='Иванов Иван Иванович',
+    recipient_name=u'Иванов Иван Иванович',
     phone='+79999999999',
     send_city_post_code='680000',
     rec_city_post_code='680000',
-    seller_name='Магазин',
-    comment='Товар',
+    seller_name=u'Магазин',
+    comment=u'Товар',
     tariff_type_code=138,
     shipping_price=300.0,
 )
@@ -52,7 +55,7 @@ delivery_request.add_item(
     weight=500,
     cost=1000,
     ware_key='12345678',
-    comment='Товар',
+    comment=u'Товар',
 )
 
 cdek_client = CDEKClient('login', 'pass')
@@ -87,7 +90,7 @@ call_request = call_courier.add_call(
 )
 call_courier.add_address(
     call_element=call_request,
-    address_street='Пушкина',
+    address_street=u'Пушкина',
     address_house='50',
     address_flat='1',
 )
