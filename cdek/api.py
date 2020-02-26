@@ -184,6 +184,7 @@ class CDEKClient:
 
     def get_regions(self, region_code_ext = None,
                     region_code = None,
+                    country_code = 'RU',
                     page = 0, size = 1000):
         """Список регионов.
 
@@ -201,7 +202,7 @@ class CDEKClient:
             data={
                 'regionCodeExt': region_code_ext,
                 'regionCode': region_code,
-                'countryCode': 'RU',
+                'countryCode': country_code,
                 'page': page,
                 'size': size,
             },
@@ -212,6 +213,7 @@ class CDEKClient:
 
     def get_cities(self, region_code_ext = None,
                    region_code = None,
+                   country_code = 'RU',
                    page = 0, size = 1000):
         """Список городов.
 
@@ -229,7 +231,7 @@ class CDEKClient:
             data={
                 'regionCodeExt': region_code_ext,
                 'regionCode': region_code,
-                'countryCode': 'RU',
+                'countryCode': country_code,
                 'page': page,
                 'size': size,
             },
