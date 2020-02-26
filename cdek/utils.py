@@ -31,7 +31,7 @@ def xml_to_string(xml):
     for elem in tree.iter():
         elem.attrib = prepare_xml(elem.attrib)
 
-    return tostring(tree.getroot(), encoding='UTF-8')
+    return tostring(tree.getroot(), encoding='utf-8')
 
 
 def clean_dict(data):
