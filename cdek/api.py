@@ -113,11 +113,12 @@ class CDEKClient:
         :return: стоимость доставки
         :rtype: dict
         """
-        today = datetime.date.today().isoformat()
+        today = datetime.date.today()
+        date_in_isoformat = today.isoformat()
 
         params = {
             'version': '1.0',
-            'dateExecute': today,
+            'dateExecute': date_in_isoformat,
             'senderCityId': sender_city_id,
             'receiverCityId': receiver_city_id,
             'senderCityPostCode': sender_city_post_code,
@@ -128,7 +129,7 @@ class CDEKClient:
 
         if not self._test:
             params['authLogin'] = self._account
-            params['secure'] = get_secure(self._secure_password, today)
+            params['secure'] = get_secure(self._secure_password, date_in_isoformat)
 
         if tariff_id:
             params['tariffId'] = tariff_id
