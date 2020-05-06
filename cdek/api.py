@@ -96,6 +96,7 @@ class CDEKClient:
             tariff_id = None,
             tariffs = None,
             services = None,
+            date_execute = None,
     ):
         """Расчет стоимости и сроков доставки.
 
@@ -110,11 +111,13 @@ class CDEKClient:
         :param tariffs: список тарифов
         :param goods: список товаров
         :param services: список дополнительных услуг
+        :param date_execute: планируемая дата отправки заказа
         :return: стоимость доставки
         :rtype: dict
         """
-        today = datetime.date.today()
-        date_in_isoformat = today.isoformat()
+        if date_execute is None:
+            date_execute = datetime.date.today()
+        date_in_isoformat = date_execute.isoformat()
 
         params = {
             'version': '1.0',
