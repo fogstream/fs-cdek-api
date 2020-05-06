@@ -201,7 +201,7 @@ def test_print_barcode(cdek_client, delivery_request):
 
 @pytest.mark.parametrize('tariff,expectation', [
     pytest.param({'tariff_id': 3}, does_not_raise(), id='Single tariff'),
-    pytest.param({'tariffs': [1, 3]}, does_not_raise(), id='Multiple tariffs'),
+    pytest.param({'tariffs': [3, 1]}, does_not_raise(), id='Multiple tariffs'),
     pytest.param({}, pytest.raises(AttributeError), marks=pytest.mark.xfail,
                  id='Without tariffs')])
 def test_shipping_cost_calculator(cdek_client, tariff,

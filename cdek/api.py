@@ -138,7 +138,7 @@ class CDEKClient:
             params['tariffId'] = tariff_id
         elif tariffs:
             tariff_list = [
-                {'priority': -i, 'id': tariff}
+                {'priority': i, 'id': tariff}
                 for i, tariff in enumerate(tariffs, 1)
             ]
             params['tariffList'] = tariff_list
