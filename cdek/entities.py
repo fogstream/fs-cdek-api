@@ -3,6 +3,9 @@ import abc
 from abc import abstractmethod
 import datetime
 from decimal import Decimal
+from typing import Any
+from typing import Dict
+from typing import List
 from typing import Optional, Union
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element, SubElement
@@ -346,3 +349,83 @@ class DeliveryRequest(AbstractElement):
 
     def to_xml(self):
         return self.delivery_request_element
+
+
+class CostRequestError(Exception):
+
+    DELIVERY_UNAVAILABLE_CODE = 3
+
+    def __init__(self, error_list):
+        # type: (List[Dict[str: Any]]) -> None
+        super(CostRequestError, self).__init__(error_list)
+        self.error_list = error_list
+
+    def is_delivery_unavailable(self):
+        # type: () -> bool
+        for error_dict in self.error_list:
+            if error_dict['code'] == self.DELIVERY_UNAVAILABLE_CODE:
+                return True
+        return False
+
+
+class ShippingService(object):
+
+    HEAVY_ID = 5
+    OVER_SIZED_ID = 6
+
+    def __init__(self, service_dict):
+        # type: (Dict[str: Any]) -> None
+        self.id = service_dict['id']
+        self.title = service_dict['title']
+        self.price = service_dict.get('price')
+        self.rate = service_dict.get('rate')
+
+    def is_heavy(self):
+        # type: () -> bool
+        return self.id == self.HEAVY_ID
+
+    def is_over_sized(self):
+        # type: () -> bool
+        return self.id == self.OVER_SIZED_ID
+
+    def __unicode__(self):
+        return u'%s - %s' % (self.title, self.price)
+
+
+class ShippingCost(object):
+
+    @staticmethod
+    def parse_date(string):
+        # type: (str) -> datetime.date
+        return datetime.datetime.strptime(string, "%Y-%m-%d").date()
+
+    def __init__(self, response_dict):
+        # type: (Dict[str: Any]) -> None
+        if 'error' in response_dict:
+            raise CostRequestError(response_dict['error'])
+        result = response_dict['result']
+        self.price = Decimal(result['price'])
+        self.tariff_id = result['tariffId']
+        self.delivery_date_min = self.parse_date(result['deliveryDateMin'])
+        self.delivery_date_max = self.parse_date(result['deliveryDateMax'])
+        self.services = [
+            ShippingService(service)
+            for service in result.get('services', [])
+        ]
+
+    def is_heavy(self):
+        # type: () -> bool
+        return any(
+            service.is_heavy()
+            for service in self.services
+        )
+
+    def is_over_sized(self):
+        # type: () -> bool
+        return any(
+            service.is_over_sized()
+            for service in self.services
+        )
+
+    def __unicode__(self):
+        return u'%s (%s - %s)' % (self.price, self.delivery_date_min, self.delivery_date_max)

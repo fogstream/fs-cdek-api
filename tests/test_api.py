@@ -7,10 +7,11 @@ except ImportError:
 import datetime
 from typing import Dict
 
+from datetime import date, timedelta
 import pytest
 
 from cdek.api import CDEKClient
-from cdek.entities import CallCourier, PreAlert
+from cdek.entities import CallCourier, PreAlert, CostRequestError, ShippingCost
 
 
 def test_get_regions(cdek_client):
@@ -201,7 +202,7 @@ def test_print_barcode(cdek_client, delivery_request):
 
 @pytest.mark.parametrize('tariff,expectation', [
     pytest.param({'tariff_id': 3}, does_not_raise(), id='Single tariff'),
-    pytest.param({'tariffs': [1, 3]}, does_not_raise(), id='Multiple tariffs'),
+    pytest.param({'tariffs': [3, 1]}, does_not_raise(), id='Multiple tariffs'),
     pytest.param({}, pytest.raises(AttributeError), marks=pytest.mark.xfail,
                  id='Without tariffs')])
 def test_shipping_cost_calculator(cdek_client, tariff,
@@ -301,3 +302,44 @@ def test_create_prealerts(cdek_client, delivery_request):
     assert 'ErrorCode' in pre_alerts[0]
     # Проверить метод можно только на валидных данных авторизации
     assert pre_alerts[0]['ErrorCode'] == 'W_PA_17'
+
+
+@pytest.mark.parametrize('weight,length,is_heavy,is_over_sized,selected_tariff', [
+    pytest.param(5, 10, False, False, 136, id='Regular'),
+    pytest.param(5, 150, False, True, 136, id='Long'),
+    pytest.param(30, 10, False, False, 62, id='Too heavy for 136 tariff, regular for 62 tariff'),
+    pytest.param(75, 10, True, False, 62, id='Too heavy for 136 tariff, heavy for 62 tariff'),
+])
+def test_shipping_cost_parser(cdek_client, weight, length, is_heavy, is_over_sized, selected_tariff):
+    response = cdek_client.get_shipping_cost(
+        sender_city_id=259,
+        receiver_city_id=7,
+        tariffs=[136, 62],
+        goods=[
+            {'weight': weight, 'length': length, 'width': 10, 'height': 10},
+        ],
+    )
+    date_execute = date.today() + timedelta(days=1)
+    shipping_cost = ShippingCost(response)
+    assert shipping_cost.price > 0
+    assert shipping_cost.delivery_date_min >= date_execute
+    assert shipping_cost.delivery_date_max >= shipping_cost.delivery_date_min
+    assert shipping_cost.is_heavy() == is_heavy
+    assert shipping_cost.is_over_sized() == is_over_sized
+    assert shipping_cost.tariff_id == selected_tariff
+
+
+@pytest.mark.parametrize('goods,is_delivery_unavailable', [
+    pytest.param([], False, id='No goods'),
+    pytest.param([{'weight': 50, 'length': 10, 'width': 10, 'height': 10}], True, id='Too large weight'),
+])
+def test_shipping_cost_error(cdek_client, goods, is_delivery_unavailable):
+    response = cdek_client.get_shipping_cost(
+        sender_city_id=259,
+        receiver_city_id=7,
+        tariff_id=136,
+        goods=goods,
+    )
+    with pytest.raises(CostRequestError) as error:
+        ShippingCost(response)
+    assert error.value.is_delivery_unavailable() == is_delivery_unavailable
