@@ -72,11 +72,9 @@ class CDEKClient:
         xml_element.attrib['Account'] = self._account
         xml_element.attrib['Secure'] = get_secure(self._secure_password, now)
 
-        response = self._exec_request(
-            url=url,
-            json_data={'xml_request': xml_to_string(xml_element)},
-            method='POST',
-        )
+        new_url = self._api_url + url
+        data = {'xml_request': xml_to_string(xml_element)}
+        response = requests.post(new_url, data=data)
         if parse:
             response = ElementTree.fromstring(response.text)
 
