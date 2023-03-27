@@ -45,19 +45,19 @@ class CDEKClient:
         self._api_url = api_url
         self._test = test
 
-    def _exec_request(self, url: str, data: Dict, method: str = 'GET',
+    def _exec_request(self, url: str, json_data: Dict, method: str = 'GET',
                       stream: bool = False, **kwargs) -> requests.Response:
-        if isinstance(data, dict):
-            data = clean_dict(data)
+        if isinstance(json_data, dict):
+            json_data = clean_dict(json_data)
 
         url = self._api_url + url
 
         if method == 'GET':
             response = requests.get(
-                f'{url}?{urlencode(data)}', stream=stream, **kwargs,
+                f'{url}?{urlencode(json_data)}', stream=stream, **kwargs,
             )
         elif method == 'POST':
-            response = requests.post(url, data=data, stream=stream, **kwargs)
+            response = requests.post(url, json=json_data, stream=stream, **kwargs)
         else:
             raise NotImplementedError(f'Unknown method "{method}"')
 
@@ -72,11 +72,9 @@ class CDEKClient:
         xml_element.attrib['Account'] = self._account
         xml_element.attrib['Secure'] = get_secure(self._secure_password, now)
 
-        response = self._exec_request(
-            url=url,
-            data={'xml_request': xml_to_string(xml_element)},
-            method='POST',
-        )
+        new_url = self._api_url + url
+        data = {'xml_request': xml_to_string(xml_element)}
+        response = requests.post(new_url, data=data)
         if parse:
             response = ElementTree.fromstring(response.text)
 
@@ -111,7 +109,7 @@ class CDEKClient:
         """
         today = datetime.date.today().isoformat()
 
-        params = {
+        json_data = {
             'version': '1.0',
             'dateExecute': today,
             'senderCityId': sender_city_id,
@@ -123,23 +121,23 @@ class CDEKClient:
         }
 
         if not self._test:
-            params['authLogin'] = self._account
-            params['secure'] = get_secure(self._secure_password, today)
+            json_data['authLogin'] = self._account
+            json_data['secure'] = get_secure(self._secure_password, today)
 
         if tariff_id:
-            params['tariffId'] = tariff_id
+            json_data['tariffId'] = tariff_id
         elif tariffs:
             tariff_list = [
                 {'priority': -i, 'id': tariff}
                 for i, tariff in enumerate(tariffs, 1)
             ]
-            params['tariffList'] = tariff_list
+            json_data['tariffList'] = tariff_list
         else:
             raise AttributeError('Tariff required')
 
         response = requests.post(
             self.CALCULATOR_URL,
-            data=json.dumps(params),
+            json=json_data,
         )
         response.raise_for_status()
 
@@ -166,7 +164,7 @@ class CDEKClient:
         """
         response = self._exec_request(
             url=self.DELIVERY_POINTS_URL,
-            data={
+            json_data={
                 'citypostcode': city_post_code,
                 'cityid': city_id,
                 'type': point_type,
@@ -194,7 +192,7 @@ class CDEKClient:
         """
         response = self._exec_request(
             url=self.REGIONS_URL,
-            data={
+            json_data={
                 'regionCodeExt': region_code_ext,
                 'regionCode': region_code,
                 'countryCode': 'RU',
@@ -222,7 +220,7 @@ class CDEKClient:
         """
         response = self._exec_request(
             url=self.CITIES_URL,
-            data={
+            json_data={
                 'regionCodeExt': region_code_ext,
                 'regionCode': region_code,
                 'countryCode': 'RU',
