@@ -148,6 +148,7 @@ class CDEKClient:
         response = requests.post(
             self.CALCULATOR_URL,
             data=json.dumps(params),
+            headers={'Content-Type': 'application/json'},
         )
         response.raise_for_status()
 
