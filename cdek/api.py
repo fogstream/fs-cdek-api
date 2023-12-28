@@ -40,6 +40,8 @@ class CDEKClient:
     DELIVERY_POINTS_URL = '/pvzlist/v1/json'
     # Вызов курьера
     CALL_COURIER_URL = '/call_courier.php'
+    # Таймаут запроса стоимости
+    SHIPPING_COST_TIMEOUT = 3
 
     def __init__(self, account, secure_password,
                  api_url = 'http://integration.cdek.ru',
@@ -149,6 +151,7 @@ class CDEKClient:
             self.CALCULATOR_URL,
             data=json.dumps(params),
             headers={'Content-Type': 'application/json'},
+            timeout=self.SHIPPING_COST_TIMEOUT,
         )
         response.raise_for_status()
 
